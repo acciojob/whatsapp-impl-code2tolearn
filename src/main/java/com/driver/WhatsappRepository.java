@@ -3,7 +3,6 @@ package com.driver;
 import java.util.*;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Repository
 public class WhatsappRepository {
@@ -14,7 +13,7 @@ public class WhatsappRepository {
     private HashMap<Group, List<Message>> groupMessageMap;
     private HashMap<Message, User> senderMap;
     private HashMap<Group, User> adminMap;
-    private HashMap<String, User> usersData;
+    private HashMap<String, User> userData;
     private int customGroupCount;
     private int messageId;
 
@@ -23,18 +22,18 @@ public class WhatsappRepository {
         this.groupUserMap = new HashMap<Group, List<User>>();
         this.senderMap = new HashMap<Message, User>();
         this.adminMap = new HashMap<Group, User>();
-        this.usersData = new HashMap<>();
+        this.userData = new HashMap<>();
         this.customGroupCount = 0;
         this.messageId = 0;
     }
 
-    public boolean isNewUser( String mobile) {
-        if(usersData.containsKey(mobile)) return false;
+    public boolean isNewUser(String mobile) {
+        if(userData.containsKey(mobile)) return false;
         return true;
     }
 
     public void createUser(String name, String mobile) {
-        usersData.put(mobile, new User(name, mobile));
+        userData.put(mobile, new User(name, mobile));
     }
 
     public String changeAdmin(User approver, User user, Group group) throws Exception{
@@ -47,7 +46,7 @@ public class WhatsappRepository {
     }
 
     public Group createGroup(List<User> users) {
-        if(users.size() == 2) return this.PersonalChat(users);
+        if(users.size() == 2) return this.createPersonalChat(users);
 
         this.customGroupCount++;
         String groupName = "Group " + this.customGroupCount;
@@ -57,9 +56,9 @@ public class WhatsappRepository {
         return group;
     }
 
-    public Group PersonalChat(List<User> users) {
-        String gName = users.get(1).getName();
-        Group personalGroup = new Group(gName, 2);
+    public Group createPersonalChat(List<User> users) {
+        String groupName = users.get(1).getName();
+        Group personalGroup = new Group(groupName, 2);
         groupUserMap.put(personalGroup, users);
         return personalGroup;
     }
